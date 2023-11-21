@@ -24,6 +24,12 @@
 			<groupId>org.pitest</groupId>
 			<artifactId>pitest-maven</artifactId>
 			<version>${pit.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>asm</groupId>
+            <artifactId>asm</artifactId>
+          </exclusion>
+        </exclusions>    
 		</dependency>
 
 		<dependency>
