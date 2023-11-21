@@ -1,8 +1,15 @@
 package eu.stamp_project.plugins;
 
-import java.io.File;
-import java.util.*;
+import java.nio.file.Paths;
 // **********************************************************************
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -31,12 +38,12 @@ public class PmpProject
     // ******** attributes
     public String getName()
     {
-        return(getTheMojo().getProject().getArtifactId());
+        return getTheMojo().getProject().getArtifactId();
     }
 
     public String getPmpMutationEngine()
     {
-        return(_PmpMutationEngine);
+        return _PmpMutationEngine;
     }
     public void setPmpMutationEngine(String value)
     {
@@ -45,7 +52,7 @@ public class PmpProject
 
     public Boolean getRunningDescartes()
     {
-        return(_RunningDescartes);
+        return _RunningDescartes;
     }
     public void setRunningDescartes(Boolean value)
     {
@@ -56,19 +63,19 @@ public class PmpProject
     // ******** associations
     public PmpMojo getTheMojo()
     {
-        return(_TheMojo);
+        return _TheMojo;
     }
 
     // **********************************************************************
     public MavenProject getTheMavenProject()
     {
-        return(getTheMojo().getProject());
+        return getTheMojo().getProject();
     }
 
     // **********************************************************************
     public ReportOptions getPitOptions()
     {
-        return(_PitOptions);
+        return _PitOptions;
     }
 
     // **********
@@ -80,14 +87,14 @@ public class PmpProject
     // **********************************************************************
     public CombinedStatistics getResults()
     {
-        return(_Results);
+        return _Results;
     }
 
     // **********************************************************************
     public ArrayList<String> getSourceDirs()
     // merge the source and test source dirs for all dependencies
     {
-        ArrayList<String> completeList = new ArrayList<String>();
+        ArrayList<String> completeList = new ArrayList<>();
         Set<Artifact> dependList = getTheMavenProject().getArtifacts();
         Iterator<Artifact> myIt = dependList.iterator();
         Artifact currentDepend;
@@ -107,13 +114,13 @@ public class PmpProject
             }
         }
 
-        return(completeList);
+        return completeList;
     }
 
     // **********************************************************************
     public ArrayList<String> getDependsCodePaths()
     {
-        ArrayList<String> codePaths = new ArrayList<String>();
+        ArrayList<String> codePaths = new ArrayList<>();
         Set<Artifact> dependList = getTheMavenProject().getArtifacts();
         Iterator<Artifact> myIt = dependList.iterator();
         Artifact currentDepend;
@@ -131,13 +138,13 @@ public class PmpProject
             }
         }
 
-        return(codePaths);
+        return codePaths;
     }
 
     // **********************************************************************
     public ArrayList<String> getDependsClassPathElements()
     {
-        ArrayList<String> completeList = new ArrayList<String>();
+        ArrayList<String> completeList = new ArrayList<>();
         Set<Artifact> dependList = getTheMavenProject().getArtifacts();
         MavenProject dependProject;
         Iterator<Artifact> myIt = dependList.iterator();
@@ -164,7 +171,7 @@ public class PmpProject
             }
         }
 
-        return(completeList);
+        return completeList;
     }
 
     // **********************************************************************
@@ -204,19 +211,18 @@ public class PmpProject
 
         // <cael>: to do: combine results of test suites
 
-        return(getResults());
+        return getResults();
     }
 
     private boolean isDefaultNotConfiguredReportOutput() {
         Collection<String> outputFormats = getPitOptions().getOutputFormats();
-        return outputFormats.isEmpty() || (outputFormats.size() == 1 &&  outputFormats.contains("HTML"));
+        return outputFormats.isEmpty() || outputFormats.size() == 1 &&  outputFormats.contains("HTML");
     }
 
     // **********************************************************************
     public void modifyReportOptions()
     {
         // require(getPitOptions() != null)
-        ArrayList<File> fileList = null;
         ArrayList<String> sourceDirList = null;
         ArrayList<String> codePaths = null;
         ArrayList<String> dependsCodePaths = null;
@@ -236,7 +242,7 @@ public class PmpProject
         }
         else {
             // If not running descartes don't use STOP_METHODS unless manually configured
-            features = new ArrayList<String>(getPitOptions().getFeatures());
+            features = new ArrayList<>(getPitOptions().getFeatures());
             Optional<String> result = features.stream().filter(str -> str.startsWith("+STOP_METHODS")).findAny();
             if(!result.isPresent()) {
                 features.add("-STOP_METHODS()");
@@ -249,15 +255,14 @@ public class PmpProject
         sourceDirList = getSourceDirs();
         if (sourceDirList != null && ! sourceDirList.isEmpty())
         {
-            fileList = PmpContext.stringsToFiles(sourceDirList);
-            getPitOptions().setSourceDirs(fileList);
+            getPitOptions().setSourceDirs(sourceDirList.stream().map(Paths::get).collect(Collectors.toList()));
         }
 
         dependsCodePaths = getDependsCodePaths();
         if (getPitOptions().getCodePaths() != null &&
              ! getPitOptions().getCodePaths().isEmpty())
         {
-            codePaths = new ArrayList<String>(getPitOptions().getCodePaths());
+            codePaths = new ArrayList<>(getPitOptions().getCodePaths());
             if (dependsCodePaths != null && ! dependsCodePaths.isEmpty())
             {
                 PmpContext.addNewStrings(codePaths, dependsCodePaths);
@@ -276,7 +281,7 @@ public class PmpProject
         if (getPitOptions().getClassPathElements() != null &&
              ! getPitOptions().getClassPathElements().isEmpty())
         {
-            classPathElts = new ArrayList<String>(getPitOptions().getClassPathElements());
+            classPathElts = new ArrayList<>(getPitOptions().getClassPathElements());
             if (dependsClassPathElts != null && ! dependsClassPathElts.isEmpty())
             {
                 PmpContext.addNewStrings(classPathElts, dependsClassPathElts);
@@ -314,7 +319,7 @@ public class PmpProject
             result = PmpContext.oneFileExists(currentModule.getCompileSourceRoots());
         }
 
-        return(result);
+        return result;
     }
 
     // **********************************************************************
@@ -324,7 +329,7 @@ public class PmpProject
         Boolean result = PmpContext.oneFileExists
             (getTheMojo().getProject().getTestCompileSourceRoots());
 
-        return(result);
+        return result;
     }
 
     // **********************************************************************

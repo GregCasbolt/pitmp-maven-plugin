@@ -1,13 +1,10 @@
 package org.pitest.maven;
 
-import java.util.ArrayList;
-import java.util.Collection;
 
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
-import org.pitest.mutationtest.config.ReportOptions;
 
 import eu.stamp_project.PmpContext;
 

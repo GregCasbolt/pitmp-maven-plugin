@@ -4,7 +4,7 @@ import org.pitest.mutationtest.ClassMutationResults;
 import org.pitest.mutationtest.ListenerArguments;
 import org.pitest.mutationtest.MutationResultListener;
 
-import eu.stamp_project.mutationtest.descartes.reporting.models.MethodRecord;
+import eu.stamp_project.descartes.reporting.models.MethodRecord;
 
 public class PseudoPartialyTestingListener implements MutationResultListener {
 	private Integer tested = 0;
@@ -12,7 +12,7 @@ public class PseudoPartialyTestingListener implements MutationResultListener {
 	private Integer pseudoTested = 0;
 	private Integer partiallyTested = 0;
 
-	private ListenerArguments args;
+	private final ListenerArguments args;
 
 	public PseudoPartialyTestingListener(final ListenerArguments args) {
 		this.args = args;
@@ -38,16 +38,16 @@ public class PseudoPartialyTestingListener implements MutationResultListener {
 	}
 
 	private void throwErrorIfPartiallyTestedAboveThreshold(Integer partiallyTested) {
-		if ((MethodThresholds.getInstance().getPartialyTestedThresold() != 0)
-				&& (partiallyTested > MethodThresholds.getInstance().getPartialyTestedThresold())) {
+		if (MethodThresholds.getInstance().getPartialyTestedThresold() != 0
+				&& partiallyTested > MethodThresholds.getInstance().getPartialyTestedThresold()) {
 			throw new RuntimeException("Partially Tested score of " + partiallyTested + " is above threshold of "
 					+ MethodThresholds.getInstance().getPartialyTestedThresold());
 		}
 	}
 
 	private void throwErrorIfPseudoTestedAboveThreshold(Integer psedudoTested) {
-		if ((MethodThresholds.getInstance().getPseudoTestedThresold() != 0)
-				&& (psedudoTested > MethodThresholds.getInstance().getPseudoTestedThresold())) {
+		if (MethodThresholds.getInstance().getPseudoTestedThresold() != 0
+				&& psedudoTested > MethodThresholds.getInstance().getPseudoTestedThresold()) {
 			throw new RuntimeException("Pseudo Tested score of " + psedudoTested + " is above threshold of "
 					+ MethodThresholds.getInstance().getPseudoTestedThresold());
 		}

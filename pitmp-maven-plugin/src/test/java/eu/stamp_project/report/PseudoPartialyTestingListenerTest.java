@@ -13,7 +13,6 @@ import org.pitest.mutationtest.DetectionStatus;
 import org.pitest.mutationtest.MutationResult;
 import org.pitest.mutationtest.MutationStatusTestPair;
 import org.pitest.mutationtest.engine.Location;
-import org.pitest.mutationtest.engine.MethodName;
 import org.pitest.mutationtest.engine.MutationDetails;
 import org.pitest.mutationtest.engine.MutationIdentifier;
 
@@ -22,7 +21,7 @@ public class PseudoPartialyTestingListenerTest {
 	private MutationResult mutation(String method, DetectionStatus status, String mutant) {
 		return new MutationResult(new MutationDetails(
 				new MutationIdentifier(
-						new Location(ClassName.fromString("AClass"), MethodName.fromString(method), "()I"), 1, mutant),
+						new Location(ClassName.fromString("AClass"), method, "()I"), 1, mutant),
 				"path/to/file", "Mutation description", 1, 0), new MutationStatusTestPair(1, status, null));
 	}
 
@@ -37,7 +36,7 @@ public class PseudoPartialyTestingListenerTest {
 	@Test(expected = RuntimeException.class)
 	public void shouldBeAbovePseudoTestedThresold() {
 		MethodThresholds.getInstance().setPseudoTestedThresold(1);
-		Collection<MutationResult> c = new ArrayList<MutationResult>();
+		Collection<MutationResult> c = new ArrayList<>();
 		// TESTED
 		c.addAll(record("method1", KILLED, KILLED, KILLED));
 		// PSEUDO_TESTED
@@ -52,7 +51,7 @@ public class PseudoPartialyTestingListenerTest {
 	@Test(expected = RuntimeException.class)
 	public void shouldBeAbovePartialyTestedThresold() {
 		MethodThresholds.getInstance().setPartialyTestedThresold(1);
-		Collection<MutationResult> c = new ArrayList<MutationResult>();
+		Collection<MutationResult> c = new ArrayList<>();
 		// TESTED
 		c.addAll(record("method1", KILLED, KILLED, KILLED));
 		// PARTIALLY_TESTED

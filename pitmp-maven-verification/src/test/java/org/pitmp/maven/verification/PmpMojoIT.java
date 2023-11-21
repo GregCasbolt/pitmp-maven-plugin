@@ -29,6 +29,7 @@ public class PmpMojoIT {
 	private static final String PITMP_VERSION = getProperty("pitmp_version");
 	private static final String PIT_VERSION = getProperty("pit_version");
 	private static final String LOG_FILENAME = "log.out";
+	private static final String PITMP_PLUGIN_NAME = "eu.stamp-project:pitmp-maven-plugin";
 
 	@Parameter(0)
 	public String projectPath;
@@ -46,7 +47,7 @@ public class PmpMojoIT {
 
 	@Parameters(name = "{index}: Project: {0}, Pom Path: {1}")
 	public static Collection<Object[]> configuration() {
-		return Arrays.asList(new Object[][] { 
+		return Arrays.asList(new Object[][] {
 			    { "/dhell", "pom.xml.pitmp.conf1.xml" },
 				{ "/dhell", "pom.xml.pitmp.noconf.xml" },
 
@@ -57,7 +58,7 @@ public class PmpMojoIT {
 				{ "/dnoo", "pom.xml.pitmp.noconf.xml" },
 
 				{ "/dnoo5", "pom.xml.pitmp.conf1.xml" },
-				{ "/dnoo5", "pom.xml.pitmp.noconf.xml" }, 
+				{ "/dnoo5", "pom.xml.pitmp.noconf.xml" },
 				});
 	}
 
@@ -65,13 +66,13 @@ public class PmpMojoIT {
 	public void testDefaultConfiguration() throws Exception {
 		prepare(projectPath);
 		// goals
-		List<String> goals = new ArrayList<String>();
+		List<String> goals = new ArrayList<>();
 		goals.add("clean");
 		goals.add("install");
-		goals.add("pitmp:run");
-		goals.add("pitmp:descartes");
+		goals.add(PITMP_PLUGIN_NAME + ":run");
+		goals.add(PITMP_PLUGIN_NAME + ":descartes");
 		// client options
-		List<String> cliOptions = new ArrayList<String>();
+		List<String> cliOptions = new ArrayList<>();
 		cliOptions.add("-Dpitest-maven-version=" + PIT_VERSION);
 		cliOptions.add("-Dpitmp-maven-plugin-version=" + PITMP_VERSION);
 		cliOptions.add("-DoutputFormats=XML");

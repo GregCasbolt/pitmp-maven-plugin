@@ -1,7 +1,11 @@
 package org.pitest.maven;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.Predicate;
 
 import org.apache.maven.artifact.Artifact;
@@ -11,6 +15,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
+import org.eclipse.aether.internal.impl.DefaultRepositorySystem;
 import org.pitest.mutationtest.config.PluginServices;
 import org.pitest.mutationtest.tooling.CombinedStatistics;
 
@@ -69,19 +74,19 @@ public class PmpMojo extends AbstractPitMojo
     // ******** attributes
     public File getBaseDir()
     {
-        return(detectBaseDir());
+        return detectBaseDir();
     }
 
     // **********************************************************************
     public boolean shouldDisplayOnly()
     {
-        return(_ShouldDisplayOnly);
+        return _ShouldDisplayOnly;
     }
 
     // **********************************************************************
     public ArrayList<String> getTargetModules()
     {
-        return(targetModules);
+        return targetModules;
     }
 
     // **********
@@ -100,13 +105,13 @@ public class PmpMojo extends AbstractPitMojo
             result = getTargetModules().get(i).equals(name);
         }
 
-        return(result);
+        return result;
     }
 
     // **********************************************************************
     public ArrayList<String> getSkippedModules()
     {
-        return(skippedModules);
+        return skippedModules;
     }
 
     // **********
@@ -130,7 +135,7 @@ public class PmpMojo extends AbstractPitMojo
             result = getSkippedModules().get(i).equals(name);
         }
 
-        return(result);
+        return result;
     }
 
     // **********************************************************************
@@ -141,7 +146,7 @@ public class PmpMojo extends AbstractPitMojo
         // {
         //     System.out.println("######## !!!!!! targetDependencies == null");
         // }
-        return(targetDependencies);
+        return targetDependencies;
     }
 
     // **********
@@ -160,7 +165,7 @@ public class PmpMojo extends AbstractPitMojo
             result = getTargetDependencies().get(i).equals(name);
         }
 
-        return(result);
+        return result;
     }
 
     // **********************************************************************
@@ -171,7 +176,7 @@ public class PmpMojo extends AbstractPitMojo
         // {
         //     System.out.println("######## !!!!!! ignoredDependencies == null");
         // }
-        return(ignoredDependencies);
+        return ignoredDependencies;
     }
 
     // **********
@@ -190,7 +195,7 @@ public class PmpMojo extends AbstractPitMojo
             result = getIgnoredDependencies().get(i).equals(name);
         }
 
-        return(result);
+        return result;
     }
 
     // **********************************************************************
@@ -236,9 +241,9 @@ public class PmpMojo extends AbstractPitMojo
     public PmpMojo()
     {
         super(new RunPitStrategy(),
-          new DependencyFilter(new PluginServices(AbstractPitMojo.class.getClassLoader())),
-          new PluginServices(AbstractPitMojo.class.getClassLoader()),
-          new PmpNonEmptyProjectCheck());
+          new DependencyFilter(PluginServices.makeForLoader(AbstractPitMojo.class.getClassLoader())),
+          PluginServices.makeForLoader(AbstractPitMojo.class.getClassLoader()),
+          new PmpNonEmptyProjectCheck(), new DefaultRepositorySystem());
     }
 
     // **********************************************************************
@@ -304,7 +309,7 @@ public class PmpMojo extends AbstractPitMojo
         result = Optional.ofNullable(PmpContext.getInstance().getCurrentProject()
             .execute());
 
-        return(result);
+        return result;
     }
 
     // **********************************************************************
@@ -320,8 +325,8 @@ public class PmpMojo extends AbstractPitMojo
         String projectName = getProject().getArtifactId();
         alreadyVisitedModules.add(projectName);
         // if no targetModules are specified, take all modules
-        boolean isTargetModule = (getTargetModules() == null ||
-            getTargetModules().isEmpty() || isInTargetModules(projectName));
+        boolean isTargetModule = getTargetModules() == null ||
+            getTargetModules().isEmpty() || isInTargetModules(projectName);
         String message;
 
         PmpContext.getInstance().updateData(this);
@@ -368,7 +373,7 @@ public class PmpMojo extends AbstractPitMojo
 
         // PitMojo displays the reasons about why we skip the project
 
-        return(theDecision);
+        return theDecision;
     }
 
     @Override
