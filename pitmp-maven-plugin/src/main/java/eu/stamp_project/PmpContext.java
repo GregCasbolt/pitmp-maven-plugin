@@ -27,13 +27,13 @@ public class PmpContext
         {
             _Instance = new PmpContext();
         }
-        return(_Instance);
+        return _Instance;
     }
 
     // **********************************************************************
     public List<MavenProject> getModules()
     {
-        return(_Modules);
+        return _Modules;
     }
 
     // **********
@@ -45,7 +45,7 @@ public class PmpContext
     // **********************************************************************
     public PmpProject getCurrentProject()
     {
-        return(_CurrentProject);
+        return _CurrentProject;
     }
 
     // **********
@@ -63,7 +63,7 @@ public class PmpContext
         String currentElt;
 
         while (myIt.hasNext())
-        {  
+        {
             currentElt = myIt.next();
             if (! targetList.contains(currentElt))
             {
@@ -75,7 +75,7 @@ public class PmpContext
     // **********************************************************************
     public static ArrayList<File> stringsToFiles(ArrayList<String> nameList)
     {
-        ArrayList<File> fileList = new ArrayList<File>();
+        ArrayList<File> fileList = new ArrayList<>();
         File newFile;
 
         for (int i = 0; i < nameList.size(); i++)
@@ -87,7 +87,7 @@ public class PmpContext
             }
         }
 
-        return(fileList);
+        return fileList;
     }
 
     // **********************************************************************
@@ -99,13 +99,13 @@ public class PmpContext
         File theFile;
 
         while (myIt.hasNext() && ! result)
-        {  
+        {
             currentName = myIt.next();
             theFile = new File(currentName);
             result = theFile.exists();
         }
 
-        return(result);
+        return result;
     }
 
     // **********************************************************************
@@ -121,8 +121,8 @@ public class PmpContext
 
     private static ArrayList<String> getClassesInternal(String buildOutputDirectory)
     {
-        ArrayList<String> classList = new ArrayList<String>();
-        ArrayList<String> classFilterList = new ArrayList<String>();
+        ArrayList<String> classList = new ArrayList<>();
+        ArrayList<String> classFilterList = new ArrayList<>();
         String aFilter;
         File outputDir = new File(buildOutputDirectory);
 
@@ -143,7 +143,7 @@ public class PmpContext
         // else
         // <cael>: check if this could happen, and what does it mean
 
-        return(classFilterList);
+        return classFilterList;
     }
 
     // **********************************************************************
@@ -156,12 +156,14 @@ public class PmpContext
     // **********************************************************************
     public void updateData(PmpMojo mojo)
     {
-        List<MavenProject> moduleList = getProjectModules(mojo);
+        //List<MavenProject> moduleList = getProjectModules(mojo);
 
         // build once at the beginning; the complete list of project modules
         if (getModules() == null)
         {
-            setModules(moduleList);
+            // setModules(moduleList);
+          // GregC: I think this needs to get all the active projects in the reactor, not just the modules for one of the sub-projects.
+          setModules(mojo.session().getProjects());
         }
     }
 
@@ -176,7 +178,7 @@ public class PmpContext
 
         List<MavenProject> moduleList = mojo.getProject().getCollectedProjects();
 
-        return(moduleList);
+        return moduleList;
     }
 
     // **********************************************************************
@@ -184,7 +186,7 @@ public class PmpContext
     // project
     public ArrayList<MavenProject> getDependingModules(MavenProject aProject)
     {
-        ArrayList<MavenProject> moduleList = new ArrayList<MavenProject>();
+        ArrayList<MavenProject> moduleList = new ArrayList<>();
         Set<Artifact> allDepend = aProject.getArtifacts();
         Iterator<Artifact> myIt = allDepend.iterator();
         Artifact currentArtifact;
@@ -200,7 +202,7 @@ public class PmpContext
             }
         }
 
-        return(moduleList);
+        return moduleList;
     }
 
     // **********************************************************************
@@ -211,12 +213,12 @@ public class PmpContext
         Boolean result = false;
 
         while (myIt.hasNext() && ! result)
-        {  
+        {
             currentModule = myIt.next();
             result = currentModule.getArtifactId().equals(name);
         }
 
-        return(result);
+        return result;
     }
 
     // **********************************************************************
@@ -227,7 +229,7 @@ public class PmpContext
         MavenProject module = null;
 
         while (myIt.hasNext() && module == null)
-        {  
+        {
             currentModule = myIt.next();
             if (currentModule.getArtifactId().equals(name))
             {
@@ -235,7 +237,7 @@ public class PmpContext
             }
         }
 
-        return(module);
+        return module;
     }
 
     // **********************************************************************
@@ -251,7 +253,7 @@ public class PmpContext
         {
             myIt = collectedProjects.iterator();
             while (myIt.hasNext())
-            {  
+            {
                 currentModule = myIt.next();
                 System.out.print(currentModule.getArtifactId() + ", ");
             }
@@ -271,7 +273,7 @@ public class PmpContext
         {
             Iterator<Artifact> myIt = dependProjects.iterator();
             while (myIt.hasNext())
-            {  
+            {
                 currentModule = myIt.next();
                 System.out.print(currentModule.getArtifactId() + ", ");
             }
@@ -291,7 +293,7 @@ public class PmpContext
         {
             Iterator<MavenProject> myIt = moduleList.iterator();
             while (myIt.hasNext())
-            {  
+            {
                 currentModule = myIt.next();
                 System.out.print(currentModule.getArtifactId() + ", ");
             }

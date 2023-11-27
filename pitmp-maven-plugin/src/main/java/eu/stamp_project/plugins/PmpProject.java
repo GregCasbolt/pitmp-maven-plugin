@@ -197,7 +197,7 @@ public class PmpProject
 
         // and complete it to update codePaths, sourceDirs and classPathElements
         modifyReportOptions();
-        // printOptionsInfo(getPitOptions());
+        printOptionsInfo(getPitOptions());
 
         pitEntryPoint = new EntryPoint();
         execResult = pitEntryPoint.execute(getTheMojo().getBaseDir(),
@@ -259,8 +259,7 @@ public class PmpProject
         }
 
         dependsCodePaths = getDependsCodePaths();
-        if (getPitOptions().getCodePaths() != null &&
-             ! getPitOptions().getCodePaths().isEmpty())
+        if (getPitOptions().getCodePaths() != null && !getPitOptions().getCodePaths().isEmpty())
         {
             codePaths = new ArrayList<>(getPitOptions().getCodePaths());
             if (dependsCodePaths != null && ! dependsCodePaths.isEmpty())
